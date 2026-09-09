@@ -133,7 +133,7 @@ export async function GET(req: NextRequest) {
     <ReportDocument from={from} to={to} jobs={jobs} byStatus={byStatus} responseRate={responseRate} />
   );
 
-  return new NextResponse(buffer, {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="job-report-${from}-to-${to}.pdf"`,

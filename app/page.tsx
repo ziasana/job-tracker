@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import JobForm from "@/components/JobForm";
 import JobTable from "@/components/JobTable";
 import { JobRecord, STATUSES, STATUS_LABELS } from "@/lib/types";
@@ -8,6 +9,22 @@ import { JobRecord, STATUSES, STATUS_LABELS } from "@/lib/types";
 const PAGE_SIZE = 10;
 
 export default function Home() {
+  return (
+    <Suspense fallback={null}>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+function HomeContent() {
+  const searchParams = useSearchParams();
+  const bookmarkletSource = searchParams.get("source");
+  const bookmarkletTitle = searchParams.get("titleGuess");
+  const bookmarkletNotes = searchParams.get("notes");
+  const hasBookmarkletData = Boolean(
+    bookmarkletSource || bookmarkletTitle || bookmarkletNotes
+  );
+
   const [jobs, setJobs] = useState<JobRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -71,7 +88,19 @@ export default function Home() {
         {dueFollowUp > 0 && <span className="text-pending"> · {dueFollowUp} need follow-up</span>}
       </p>
 
-      <JobForm onAdded={load} />
+      <JobForm
+        onAdded={load}
+        open={hasBookmarkletData ? true : undefined}
+        initial={
+          hasBookmarkletData
+            ? {
+                title: bookmarkletTitle ?? undefined,
+                source: bookmarkletSource ?? undefined,
+                notes: bookmarkletNotes ?? undefined,
+              }
+            : undefined
+        }
+      />
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <input

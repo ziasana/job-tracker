@@ -3,16 +3,30 @@
 import { useState } from "react";
 import { STATUSES, STATUS_LABELS } from "@/lib/types";
 
-export default function JobForm({ onAdded }: { onAdded: () => void }) {
-  const [open, setOpen] = useState(false);
+type JobFormInitial = {
+  title?: string;
+  source?: string;
+  notes?: string;
+};
+
+export default function JobForm({
+  onAdded,
+  open: openProp,
+  initial,
+}: {
+  onAdded: () => void;
+  open?: boolean;
+  initial?: JobFormInitial;
+}) {
+  const [open, setOpen] = useState(openProp ?? false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
-    title: "",
+    title: initial?.title ?? "",
     company: "",
-    source: "",
+    source: initial?.source ?? "",
     dateApplied: new Date().toISOString().slice(0, 10),
     status: "APPLIED",
-    notes: "",
+    notes: initial?.notes ?? "",
   });
 
   function update(field: string, value: string) {

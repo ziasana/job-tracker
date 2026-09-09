@@ -20,6 +20,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <a href="/reports" className="rounded-fb px-3 py-1.5 hover:bg-white/15">
                 Reports
               </a>
+              <a href="/bookmarklet" className="rounded-fb px-3 py-1.5 hover:bg-white/15">
+                Bookmarklet
+              </a>
             </nav>
           </div>
         </header>

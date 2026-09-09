@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum JobStatus {
+  APPLIED
+  PHONE_SCREEN
+  INTERVIEW
+  OFFER
+  REJECTED
+  WITHDRAWN
+}
+
+model Job {
+  id              String    @id @default(uuid())
+  title           String
+  company         String
+  source          String
+  sourceListingId String? // reserved for later linking to the job-aggregator project
+  dateApplied     DateTime
+  status          JobStatus @default(APPLIED)
+  notes           String?
+  tags            String[]  @default([])
+  contactName     String?
+  contactEmail    String?
+  followUpDate    DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  statusHistory StatusHistory[]
+
+  @@index([dateApplied])
+  @@index([status])
+}
+
+model StatusHistory {
+  id        String    @id @default(uuid())
+  jobId     String
+  job       Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  status    JobStatus
+  changedAt DateTime  @default(now())
+  note      String?
+
+  @@index([jobId])
+}
